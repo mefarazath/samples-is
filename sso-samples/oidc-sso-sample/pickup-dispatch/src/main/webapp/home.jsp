@@ -29,6 +29,7 @@
 <%@page import="java.util.logging.Logger"%>
 <%@page import="org.wso2.samples.claims.manager.ClaimManagerProxy"%>
 <%@ page import="org.wso2.sample.identity.oauth2.logout.SessionIdStore" %>
+<%@ page import="java.util.UUID" %>
 
 <%
     final Logger logger = Logger.getLogger(getClass().getName());
@@ -71,6 +72,14 @@
                 }
             }
             
+            String idpSessionId = (String) SignedJWT.parse(idToken).getJWTClaimsSet().getClaim("idp_session_id");
+            if (idpSessionId == null) {
+                idpSessionId = UUID.randomUUID().toString();
+            }
+            if (idpSessionId != null) {
+                session.setAttribute("IDP_SESSION_KEY", idpSessionId);
+            }
+            
             ClaimManagerProxy claimManagerProxy = (ClaimManagerProxy) application.getAttribute("claimManagerProxyInstance");
 
             customClaimValueMap = claimsSet.getCustomClaims();
@@ -106,6 +115,7 @@
     <link href="css/spinner.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
     <link href="css/dispatch.css" rel="stylesheet">
+<%--    <script src="libs/jquery_3.3.1/jquery.min.js"></script>--%>
 </head>
 
 <body class="app-home dispatch">
